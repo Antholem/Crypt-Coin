@@ -15,10 +15,13 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { Link, useLocation } from 'react-router-dom';
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import useStore from '../store';
 
-const drawerWidth = 240;
+const drawerWidth = '100%';
 
 function NavBar(props) {
+    const { currency, setCurrency } = useStore();
     const { window } = props;
     const [mobileOpen, setMobileOpen] = React.useState(false);
 
@@ -32,9 +35,20 @@ function NavBar(props) {
         { page: 'Market', path: '/market' }
     ];
 
+    const currencies = [
+        { name: 'USD', value: 'usd' },
+        { name: 'EUR', value: 'eur' },
+        { name: 'JPY', value: 'jpy' },
+        { name: 'PHP', value: 'php' },
+    ];
+
     const location = useLocation(); // useLocation for routing
 
     const path = location.pathname;
+
+    const handleChangeCurrency = (e) => {
+        setCurrency(e.target.value);
+    };
 
     const drawer = (
         <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
@@ -78,10 +92,28 @@ function NavBar(props) {
                     <Typography
                         variant="h6"
                         component="div"
-                        sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
+                        sx={{ display: { xs: 'none', sm: 'block' } }}
                     >
                         MUI
                     </Typography>
+                    <Select
+                        variant="outlined"
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        label="Currency"
+                        onChange={handleChangeCurrency}
+                        value={currency}
+                        style={{ width: 100, height: 40, marginLeft: 15 }}
+                    >
+                        {currencies.map((currency) => (
+                            <MenuItem value={currency.value}>
+                                {currency.name}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                    <Box  sx={{ flexGrow: 1}}>
+                        
+                    </Box>
                     <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
                         {navItems.map((item) => (
                             <Button
@@ -99,6 +131,7 @@ function NavBar(props) {
             </AppBar>
             <Box component="nav">
                 <Drawer
+                    anchor={'top'}
                     container={container}
                     variant="temporary"
                     open={mobileOpen}
@@ -108,7 +141,7 @@ function NavBar(props) {
                     }}
                     sx={{
                         display: { xs: 'block', sm: 'none' },
-                        '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+                        '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, },
                     }}
                 >
                     {drawer}
