@@ -53,7 +53,7 @@ function NavBar(props) {
     const drawer = (
         <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
             <Typography variant="h6" sx={{ my: 2 }}>
-                MUI
+                Crypt-Coint
             </Typography>
             <Divider />
             <List>
@@ -94,7 +94,7 @@ function NavBar(props) {
                         component="div"
                         sx={{ display: { xs: 'none', sm: 'block' } }}
                     >
-                        MUI
+                        Crypt-Coint
                     </Typography>
                     <Select
                         variant="outlined"

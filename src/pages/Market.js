@@ -138,7 +138,7 @@ export default function CustomPaginationActionsTable() {
                         <TableBody sx={{ backgroundColor: '#0f051d' }}>
                             {!isLoading &&
                                 coins.slice(page * 10, page * 10 + 10).map((coin) => (
-                                    <TableRow key={coin.id} sx={{ '&:hover': { backgroundColor: '#200840', transition: '0.5s' } }}>
+                                    <TableRow key={coin.id} sx={{ cursor: 'pointer', '&:hover': { backgroundColor: '#200840', transition: '0.5s' } }}>
                                         <TableCell component="th" scope="row">
                                             {coin.rank}
                                         </TableCell>
