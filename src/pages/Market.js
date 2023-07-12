@@ -14,20 +14,21 @@ import FirstPageIcon from '@mui/icons-material/FirstPage';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
-import { FormControl, InputLabel, MenuItem, Select, Stack, TableHead } from '@mui/material';
+import { Stack, TableHead } from '@mui/material';
 import Loading from '../components/Loading';
 import MovingIcon from '@mui/icons-material/Moving';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 import { green, red } from '@mui/material/colors';
 import useStore from '../store';
 import { Link } from 'react-router-dom';
+import { useMediaQuery } from '@mui/material';
 
 const columns = [
     { id: 'rank', label: '#', minWidth: 0 },
-    { id: 'coin', label: 'Coin', minWidth: 170 },
-    { id: 'price', label: 'Price', align: 'right', minWidth: 100 },
-    { id: 'change', label: '24h Change', align: 'right', minWidth: 100 },
-    { id: 'marketcap', label: 'Market Cap', align: 'right', minWidth: 100 },
+    { id: 'coin', label: 'Coin', minWidth: 0 },
+    { id: 'price', label: 'Price', align: 'right', minWidth: 0 },
+    { id: 'change', label: '24h Change', align: 'right', minWidth: 0 },
+    { id: 'marketcap', label: 'Market Cap', align: 'right', minWidth: 0 },
 ];
 
 function TablePaginationActions(props) {
@@ -92,6 +93,8 @@ export default function CustomPaginationActionsTable() {
 
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * 10 - coins.length) : 0;
 
+    const isMobile = useMediaQuery((theme) => theme.breakpoints.down('md'));
+
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
@@ -131,7 +134,11 @@ export default function CustomPaginationActionsTable() {
                                         align={column.align}
                                         style={{ minWidth: column.minWidth }}
                                     >
-                                        {column.label}
+                                        {column.id === 'change' && isMobile
+                                            ? '24h'
+                                            : column.id === 'marketcap' && isMobile
+                                                ? 'Mkt Cap'
+                                                : column.label}
                                     </TableCell>
                                 ))}
                             </TableRow>
@@ -158,10 +165,7 @@ export default function CustomPaginationActionsTable() {
                                                     />
                                                 </Box>
                                                 <Box>
-                                                    <Box sx={{ display: { xs: 'none', md: 'initial' } }}>{coin.name}</Box>
-                                                    <Box sx={{ display: { xs: 'initial', md: 'none' } }}>
-                                                        {coin.symbol.toUpperCase()}
-                                                    </Box>
+                                                    {isMobile ? coin.symbol.toUpperCase() : coin.name}
                                                 </Box>
                                             </Stack>
                                         </TableCell>
@@ -170,7 +174,7 @@ export default function CustomPaginationActionsTable() {
                                         </TableCell>
                                         <TableCell align="right">
                                             <Box sx={{ color: coin.price_change_percentage_24h < 0 ? red[700] : green[500] }}>
-                                                {coin.price_change_percentage_24h}%
+                                                {isMobile ? coin.price_change_percentage_24h.toFixed(1) : coin.price_change_percentage_24h}%
                                             </Box>
                                         </TableCell>
                                         <TableCell align="right">

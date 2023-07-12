@@ -14,8 +14,9 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
+import Logo from '../logo.png'
 import { Link, useLocation } from 'react-router-dom';
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import { FormControl, InputLabel, MenuItem, Select, CardMedia } from '@mui/material';
 import useStore from '../store';
 
 const drawerWidth = '100%';
@@ -89,11 +90,13 @@ function NavBar(props) {
                     >
                         <MenuIcon />
                     </IconButton>
+                    <CardMedia omponent='img' image={Logo} sx={{ width: 20, height: 20, mr: 1 }} />
                     <Typography
                         variant="h6"
                         component="div"
                         sx={{ display: { xs: 'none', sm: 'block' } }}
                     >
+                        
                         Crypt-Coint
                     </Typography>
                     <Select
