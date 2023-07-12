@@ -20,6 +20,7 @@ import MovingIcon from '@mui/icons-material/Moving';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 import { green, red } from '@mui/material/colors';
 import useStore from '../store';
+import { Link } from 'react-router-dom';
 
 const columns = [
     { id: 'rank', label: '#', minWidth: 0 },
@@ -138,12 +139,17 @@ export default function CustomPaginationActionsTable() {
                         <TableBody sx={{ backgroundColor: '#0f051d' }}>
                             {!isLoading &&
                                 coins.slice(page * 10, page * 10 + 10).map((coin) => (
-                                    <TableRow key={coin.id} sx={{ cursor: 'pointer', '&:hover': { backgroundColor: '#200840', transition: '0.5s' } }}>
+                                    <TableRow
+                                        key={coin.id}
+                                        component={Link}
+                                        to={`/market/${coin.id}`}
+                                        sx={{ cursor: 'pointer', textDecoration: 'none', '&:hover': { backgroundColor: '#200840', transition: '0.5s', } }}
+                                    >
                                         <TableCell component="th" scope="row">
                                             {coin.rank}
                                         </TableCell>
                                         <TableCell>
-                                            <Stack direction='row' spacing={1} alignItems='center'>
+                                            <Stack direction="row" spacing={1} alignItems="center">
                                                 <Box>
                                                     <img
                                                         src={coin.image}
@@ -152,9 +158,7 @@ export default function CustomPaginationActionsTable() {
                                                     />
                                                 </Box>
                                                 <Box>
-                                                    <Box sx={{ display: { xs: 'none', md: 'initial' } }}>
-                                                        {coin.name}
-                                                    </Box>
+                                                    <Box sx={{ display: { xs: 'none', md: 'initial' } }}>{coin.name}</Box>
                                                     <Box sx={{ display: { xs: 'initial', md: 'none' } }}>
                                                         {coin.symbol.toUpperCase()}
                                                     </Box>
