@@ -22,7 +22,8 @@ import useStore from '../store';
 const drawerWidth = '100%';
 
 function NavBar(props) {
-    const { currency, setCurrency } = useStore();
+    const currency = useStore((state) => state.currency);
+    const setCurrency = useStore((state) => state.setCurrency);
     const { window } = props;
     const [mobileOpen, setMobileOpen] = React.useState(false);
 
@@ -48,7 +49,9 @@ function NavBar(props) {
     const path = location.pathname;
 
     const handleChangeCurrency = (e) => {
-        setCurrency(e.target.value);
+        const selectedCurrency = e.target.value;
+        setCurrency(selectedCurrency);
+        localStorage.setItem('currency', selectedCurrency);
     };
 
     const drawer = (

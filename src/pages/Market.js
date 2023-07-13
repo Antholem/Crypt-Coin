@@ -14,7 +14,7 @@ import FirstPageIcon from '@mui/icons-material/FirstPage';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
-import { Stack, TableHead } from '@mui/material';
+import { Stack, TableHead, Typography } from '@mui/material';
 import Loading from '../components/Loading';
 import MovingIcon from '@mui/icons-material/Moving';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
@@ -119,95 +119,127 @@ export default function CustomPaginationActionsTable() {
     }, [currency]);
 
     return (
-        <Fragment>
-            <Box>
-                Market Update ({currency})
-            </Box>
-            <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-                <TableContainer component={Paper}>
-                    <Table sx={{ minWidth: 500 }} aria-label="custom pagination table">
-                        <TableHead sx={{ backgroundImage: 'linear-gradient(25deg, #2600fc, #ff00ea)' }}>
-                            <TableRow>
-                                {columns.map((column) => (
-                                    <TableCell
-                                        key={column.id}
-                                        align={column.align}
-                                        style={{ minWidth: column.minWidth }}
-                                    >
-                                        {column.id === 'change' && isMobile
-                                            ? '24h'
-                                            : column.id === 'marketcap' && isMobile
-                                                ? 'Mkt Cap'
-                                                : column.label}
-                                    </TableCell>
-                                ))}
-                            </TableRow>
-                        </TableHead>
-                        <TableBody sx={{ backgroundColor: '#0f051d' }}>
-                            {!isLoading &&
-                                coins.slice(page * 10, page * 10 + 10).map((coin) => (
-                                    <TableRow
-                                        key={coin.id}
-                                        component={Link}
-                                        to={`/market/${coin.id}`}
-                                        sx={{ cursor: 'pointer', textDecoration: 'none', '&:hover': { backgroundColor: '#200840', transition: '0.5s', } }}
-                                    >
-                                        <TableCell component="th" scope="row">
-                                            {coin.rank}
+        <Box sx={{p: 3}}>
+            <Stack direction='column' spacing={2}>
+                <Box>
+                    <Typography sx={{textAlign: 'center'}} variant='h4'>
+                        {isMobile ? 'Market Update' : 'Cryptocurrency Prices by Market Cap'}
+                    </Typography>
+                </Box>
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                    <TableContainer component={Paper}>
+                        <Table sx={{ minWidth: 500 }} aria-label="custom pagination table">
+                            <TableHead sx={{ backgroundImage: 'linear-gradient(25deg, #2600fc, #ff00ea)' }}>
+                                <TableRow>
+                                    {columns.map((column) => (
+                                        <TableCell
+                                            key={column.id}
+                                            align={isMobile ? 'center' : column.align}
+                                            style={{ minWidth: column.minWidth }}
+                                        >
+                                            {column.id === 'change' && isMobile
+                                                ? '24h'
+                                                : column.id === 'marketcap' && isMobile
+                                                    ? 'Mkt Cap'
+                                                    : column.label}
                                         </TableCell>
-                                        <TableCell>
-                                            <Stack direction="row" spacing={1} alignItems="center">
-                                                <Box>
-                                                    <img
-                                                        src={coin.image}
-                                                        alt={coin.name}
-                                                        style={{ width: '24px', height: '24px', marginRight: '8px' }}
-                                                    />
+                                    ))}
+                                </TableRow>
+                            </TableHead>
+                            <TableBody sx={{ backgroundColor: '#0f051d' }}>
+                                {!isLoading &&
+                                    coins.slice(page * 10, page * 10 + 10).map((coin) => (
+                                        <TableRow
+                                            key={coin.id}
+                                            component={Link}
+                                            to={`/market/${coin.id}`}
+                                            sx={{ cursor: 'pointer', textDecoration: 'none', '&:hover': { backgroundColor: '#200840', transition: '0.5s', } }}
+                                        >
+                                            <TableCell component="th" scope="row">
+                                                {coin.rank}
+                                            </TableCell>
+                                            <TableCell>
+                                                <Stack direction="row" spacing={1} alignItems="center">
+                                                    <Box>
+                                                        <Stack>
+                                                            <img
+                                                                src={coin.image}
+                                                                alt={coin.name}
+                                                                style={{ width: '24px', height: '24px', marginRight: { xs: 0, md: 8 } }}
+                                                            />
+                                                        </Stack>
+                                                    </Box>
+                                                    <Box>
+                                                        {isMobile ? coin.symbol.toUpperCase() : coin.name}
+                                                    </Box>
+                                                </Stack>
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                {currencySymbol}{coin.current_price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                <Box sx={{ color: coin.price_change_percentage_24h < 0 ? red[700] : green[500] }}>
+                                                    {isMobile ? (
+                                                        <React.Fragment>
+                                                            {coin.price_change_percentage_24h.toFixed(1)}%
+                                                        </React.Fragment>
+                                                    ) : (
+                                                        <React.Fragment>
+                                                            {coin.price_change_percentage_24h < 0 ? (
+                                                                <Stack direction="row" justifyContent='flex-end' alignItems='center' spacing={1}>
+                                                                    <Box>
+                                                                        {coin.price_change_percentage_24h}%
+                                                                    </Box>
+                                                                    <Box>
+                                                                        <TrendingDownIcon sx={{ fontSize: '1em' }} />
+                                                                    </Box>
+                                                                </Stack>
+                                                            ) : (
+                                                                <Stack direction="row" justifyContent='flex-end' alignItems='center' spacing={1}>
+                                                                    <Box>
+                                                                        {coin.price_change_percentage_24h}%
+                                                                    </Box>
+                                                                    <Box>
+                                                                        <MovingIcon sx={{ fontSize: '1em' }} />
+                                                                    </Box>
+                                                                </Stack>
+                                                            )}
+                                                        </React.Fragment>
+                                                    )}
                                                 </Box>
-                                                <Box>
-                                                    {isMobile ? coin.symbol.toUpperCase() : coin.name}
-                                                </Box>
-                                            </Stack>
-                                        </TableCell>
-                                        <TableCell align="right">
-                                            {currencySymbol} {coin.current_price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                        </TableCell>
-                                        <TableCell align="right">
-                                            <Box sx={{ color: coin.price_change_percentage_24h < 0 ? red[700] : green[500] }}>
-                                                {isMobile ? coin.price_change_percentage_24h.toFixed(1) : coin.price_change_percentage_24h}%
-                                            </Box>
-                                        </TableCell>
-                                        <TableCell align="right">
-                                            {currencySymbol} {coin.market_cap.toLocaleString()}
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                {currencySymbol}{coin.market_cap.toLocaleString()}
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                {isLoading && (
+                                    <TableRow>
+                                        <TableCell colSpan={5} align="center">
+                                            <Loading />
                                         </TableCell>
                                     </TableRow>
-                                ))}
-                            {isLoading && (
-                                <TableRow>
-                                    <TableCell colSpan={5} align="center">
-                                        <Loading />
-                                    </TableCell>
-                                </TableRow>
-                            )}
-                            {emptyRows > 0 && (
-                                <TableRow style={{ height: 53 * emptyRows }}>
-                                    <TableCell colSpan={5} />
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-                <TablePagination
-                    sx={{ border: 'none', mt: 2 }}
-                    rowsPerPageOptions={[]}
-                    colSpan={5}
-                    count={coins.length}
-                    rowsPerPage={10}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    ActionsComponent={TablePaginationActions}
-                />
-            </Box>
-        </Fragment>
+                                )}
+                                {emptyRows > 0 && (
+                                    <TableRow style={{ height: 53 * emptyRows }}>
+                                        <TableCell colSpan={5} />
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                    <TablePagination
+                        sx={{ border: 'none', mt: 2 }}
+                        rowsPerPageOptions={[]}
+                        colSpan={5}
+                        count={coins.length}
+                        rowsPerPage={10}
+                        page={page}
+                        onPageChange={handleChangePage}
+                        ActionsComponent={TablePaginationActions}
+                    />
+                </Box>
+            </Stack>
+        </Box>
     );
 }

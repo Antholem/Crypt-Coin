@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 
 const useStore = create((set) => ({
-    currency: 'usd',
-    setCurrency: (currency) => set({ currency: currency }),
+    currency: localStorage.getItem('currency') || 'usd',
+    setCurrency: (currency) => set({ currency }),
 }));
 
 export default useStore;
