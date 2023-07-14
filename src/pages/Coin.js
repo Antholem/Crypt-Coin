@@ -248,3 +248,30 @@ const Coin = () => {
 };
 
 export default Coin;
+
+
+
+            // <Typography variant='body2'>
+            //   Market Cap: {currencySymbol}{formattedMarketCap}
+            // </Typography>
+            // <Typography variant='body2'>
+            //   Fully Diluted Valuation: {currencySymbol}{formattedFullyDilutedValuation}
+            // </Typography>
+            // <Typography variant='body2'>
+            //   24hr trading volume: {currencySymbol}{formattedTradingVolume}
+            // </Typography>
+            // <Typography variant='body2'>
+            //   Circulating Supply: {formattedCirculatingSupply}
+            // </Typography>
+            // <Typography variant='body2'>
+            //   Total Supply: {formattedTotalSupply}
+            // </Typography>
+            // <Typography variant='body2'>
+            //   Max Supply: {formattedMaxSupply}
+            // </Typography>
+            // <Typography
+            //   variant='body2'
+            //   dangerouslySetInnerHTML={{
+            //     __html: `${parseHTML(coin.description.en).split('.')[0]}.`,
+            //   }}
+            // />
