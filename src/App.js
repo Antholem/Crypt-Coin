@@ -6,6 +6,7 @@ import NavBar from './components/NavBar';
 import Market from './pages/Market';
 import About from './pages/About';
 import Coin from './pages/Coin';
+import { purple } from '@mui/material/colors';
 
 const darkTheme = createTheme({
   palette: {
@@ -14,6 +15,9 @@ const darkTheme = createTheme({
       default: '#0f051d',
       paper: '#0f051d',
     },
+    primary: {
+      main: '#ff00ea'
+    }
   },
   typography: {
     fontFamily: ['Space Grotesk', 'sans-serif'].join(','),

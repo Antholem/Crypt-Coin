@@ -14,7 +14,7 @@ import FirstPageIcon from '@mui/icons-material/FirstPage';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
-import { Stack, TableHead, Typography } from '@mui/material';
+import { CardMedia, Stack, TableHead, Typography } from '@mui/material';
 import Loading from '../components/Loading';
 import MovingIcon from '@mui/icons-material/Moving';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
@@ -162,11 +162,7 @@ export default function CustomPaginationActionsTable() {
                                                 <Stack direction="row" spacing={1} alignItems="center">
                                                     <Box>
                                                         <Stack>
-                                                            <img
-                                                                src={coin.image}
-                                                                alt={coin.name}
-                                                                style={{ width: '24px', height: '24px', marginRight: { xs: 0, md: 8 } }}
-                                                            />
+                                                            <CardMedia component='img' image={coin.image} sx={{ width: '24px', height: '24px', marginRight: { xs: 0, md: 1 } }} />
                                                         </Stack>
                                                     </Box>
                                                     <Box>
@@ -187,7 +183,7 @@ export default function CustomPaginationActionsTable() {
                                                 </Stack>
                                             </TableCell>
                                             <TableCell align="right">
-                                                {currencySymbol}{coin.current_price.toLocaleString(undefined, { minimumFractionDigits: isMobile ? 1 : 2, maximumFractionDigits: isMobile ? 1 : 2 })}
+                                                {currencySymbol}{coin.current_price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                             </TableCell>
                                             <TableCell align="right">
                                                 <Box sx={{ color: coin.price_change_percentage_24h < 0 ? red[500] : green[400] }}>

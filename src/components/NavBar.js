@@ -93,7 +93,7 @@ function NavBar(props) {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <CardMedia omponent='img' image={Logo} sx={{ width: 20, height: 20, mr: 1 }} />
+                    <CardMedia component='img' image={Logo} sx={{ width: 20, height: 20, mr: 1 }} />
                     <Typography
                         variant="h6"
                         component="div"

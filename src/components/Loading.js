@@ -1,9 +1,9 @@
 import { Box } from '@mui/material';
 import React from 'react';
 
-const Loading = () => {
+const Loading = (props) => {
     return (
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: props.height }}>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48">
                 <linearGradient id="gradient" gradientTransform="rotate(25)">
                     <stop offset="0%" stopColor="#2600fc" />
