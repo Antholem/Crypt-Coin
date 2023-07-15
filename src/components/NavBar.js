@@ -13,11 +13,11 @@ import ListItemText from '@mui/material/ListItemText';
 import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
 import Logo from '../logo.png'
 import { Link, useLocation } from 'react-router-dom';
-import { FormControl, InputLabel, MenuItem, Select, CardMedia } from '@mui/material';
+import { MenuItem, Select, CardMedia } from '@mui/material';
 import useStore from '../store';
+import { grey } from '@mui/material/colors';
 
 const drawerWidth = '100%';
 
@@ -57,7 +57,7 @@ function NavBar(props) {
     const drawer = (
         <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
             <Typography variant="h6" sx={{ my: 2 }}>
-                Crypt-Coint
+                Crypt-Coin
             </Typography>
             <Divider />
             <List>
@@ -97,11 +97,40 @@ function NavBar(props) {
                     <Typography
                         variant="h6"
                         component="div"
-                        sx={{ display: { xs: 'none', sm: 'block' } }}
+                        sx={{ flexGrow: 1 }}
                     >
-                        
-                        Crypt-Coint
+
+                        Crypt-Coin
                     </Typography>
+                    <Box sx={{ display: { xs: 'none', sm: 'block' }, flexGrow: 1 }}>
+                        {navItems.map((item) => (
+                            <Typography
+                                sx={{
+                                    cursor: 'pointer',
+                                    textDecoration: 'none',
+                                    mx: 2,
+                                    transition: '0.5s',
+                                    color:
+                                        item.path === path ||
+                                            (item.path === '/market' && path === '/market/') ||
+                                            (item.path === '/market' && path.startsWith('/market/'))
+                                            ? '#ff00ea' // Highlight specific links based on path value
+                                            : grey[50],
+                                    '&:hover': {
+                                        color: '#ff00ea',
+                                    },
+                                }}
+                                variant="body1"
+                                key={item.page}
+                                component={Link}
+                                to={item.path}
+                                selected={item.path === path}
+                            >
+                                {item.page}
+                            </Typography>
+                        ))}
+
+                    </Box>
                     <Select
                         variant="outlined"
                         labelId="demo-simple-select-label"
@@ -117,22 +146,6 @@ function NavBar(props) {
                             </MenuItem>
                         ))}
                     </Select>
-                    <Box  sx={{ flexGrow: 1}}>
-                        
-                    </Box>
-                    <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-                        {navItems.map((item) => (
-                            <Button
-                                key={item.page}
-                                sx={{ color: '#fff' }}
-                                component={Link}
-                                to={item.path}
-                                selected={item.path === path}
-                            >
-                                {item.page}
-                            </Button>
-                        ))}
-                    </Box>
                 </Toolbar>
             </AppBar>
             <Box component="nav">
