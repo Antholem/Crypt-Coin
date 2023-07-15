@@ -146,11 +146,29 @@ const Coin = () => {
 
   const progress = calculateProgress();
 
+  const latestHistoricalData = historicalData.slice(0, 5);
+
+  const parseHTML = (html) => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+
+    // Apply white color to anchor tags
+    const links = doc.querySelectorAll('a');
+    links.forEach((link) => {
+      link.style.color = '#ff00ea';
+      link.style.textDecoration = 'none';
+    });
+
+    return doc.body.innerHTML;
+  };
+
+  const coinDescription = coin.description.en.split('. ')[0] + '. ' + coin.description.en.split('. ')[1] + '. ' + coin.description.en.split('. ')[2] + '.';
+
   return (
     <Box sx={{ p: 3 }}>
-      <Grid container direction='row' spacing={5}>
+      <Grid container direction='row' spacing={2}>
         <Grid item container direction='row' xs={12} spacing={2}>
-          <Grid item xs={12} md={8}>
+          <Grid item xs={12} md={7.5}>
             <Grid container direction='column' spacing={1}>
               <Grid item>
                 <Grid container direction='row' alignItems='center' spacing={1}>
@@ -189,6 +207,13 @@ const Coin = () => {
                 </Grid>
               </Grid>
               <Grid item>
+                <Grid item>
+                  <Typography variant='body2'>
+                    MKT: {currencySymbol}{formattedMarketCap}
+                  </Typography>
+                </Grid>
+              </Grid>
+              <Grid item>
                 <Grid container direction='row' alignItems='center' spacing={1}>
                   <Grid item>
                     <Typography variant='body2'>
@@ -196,7 +221,9 @@ const Coin = () => {
                     </Typography>
                   </Grid>
                   <Grid item>
-                    <ProgressBar percent={progress} />
+                    <Typography variant='body2' sx={{ color: coinChange === 0 ? red[500] : green[400] }}>
+                      {coinChange}%
+                    </Typography>
                   </Grid>
                 </Grid>
               </Grid>
@@ -222,7 +249,10 @@ const Coin = () => {
                   </Grid>
                 </Grid>
               </Grid>
-              <Grid item sx={{ mt: 1 }}>
+              <Grid item>
+                <Typography variant='h6'>
+                  Historical Price Changed
+                </Typography>
                 <TableContainer component={Paper}>
                   <Table>
                     <TableHead sx={{ backgroundImage: 'linear-gradient(25deg, #2600fc, #ff00ea)' }}>
@@ -260,41 +290,131 @@ const Coin = () => {
                   </Table>
                 </TableContainer>
               </Grid>
+              <Grid item>
+                <Typography variant='h6'>
+                  What is {coin.name}?
+                </Typography>
+                {
+                  coin.description.en ? (
+                    <>
+                      <Typography variant='body2'
+                        dangerouslySetInnerHTML={{
+                          __html: parseHTML(coinDescription),
+                        }}
+                      />
+                    </>
+                  ):(
+                    <>
+                        <Typography variant='body2'>
+                          {coin.name} ({coin.symbol.toUpperCase()}) is currently ranked #{coin.market_cap_rank} among cryptocurrencies, with a price of {currencySymbol}{formattedPrice}.
+                          It has a BTC value of {coinValueBTC} and has experienced a {coinChange}% change in the past 24 hours.
+                          The cryptocurrency's Market Cap is {currencySymbol}{formattedMarketCap}, and its Fully Diluted Valuation is {currencySymbol}{formattedFullyDilutedValuation}.
+                          With a trading volume of {currencySymbol}{formattedTradingVolume} in the last 24 hours,{' '}
+                          {coin.name} has a circulating supply of {formattedCirculatingSupply}, a total supply of {formattedTotalSupply}, and a maximum supply of {formattedMaxSupply}.
+                        </Typography>
+                    </>
+                  )
+                }
+              </Grid>
             </Grid>
           </Grid>
-          <Grid item xs={12} md={4}>
-            <Grid item>
-              <Typography variant='h6'>
-                Crypt-Coinverter
-              </Typography>
-              <Card>
-                <CardContent>
-                  <TextField
-                    label={coin.name}
-                    id="outlined-start-adornment"
-                    type='number'
-                    value={currencyValue}
-                    onChange={handleCurrencyValueChange}
-                    sx={{ my: 1, width: '100%' }}
-                    InputProps={{
-                      startAdornment: <InputAdornment position="start">{coin.symbol.toUpperCase()}</InputAdornment>,
-                    }}
-                  />
+          <Grid item xs={12} md={4.5}>
+            <Grid container direction='column' spacing={1}>
+              <Grid item>
+                <Typography variant='h6'>
+                  Historical Price Changed
+                </Typography>
+                <TableContainer component={Paper}>
+                  <Table>
+                    <TableHead sx={{ backgroundImage: 'linear-gradient(25deg, #2600fc, #ff00ea)' }}>
+                      <TableRow>
+                        {latestHistoricalData.slice(1).map((data, index) => { // Use latestHistoricalData.slice(1) to exclude the first element
+                          const date = new Date(data[0]);
+                          const hour = date.getHours().toString().padStart(2, '0');
+                          const minute = date.getMinutes().toString().padStart(2, '0');
 
-                  <TextField
-                    label={currency.toUpperCase()}
-                    id="outlined-start-adornment"
-                    value={formattedComputedPrice}
-                    sx={{ my: 1, width: '100%' }}
-                    InputProps={{
-                      startAdornment: <InputAdornment position="start">{currencySymbol}</InputAdornment>,
-                    }}
-                  />
-                  <Typography sx={{ mt: 1 }} variant='caption'>
-                    1 {coin.symbol.toUpperCase()} = {currencySymbol}{formattedPrice}
-                  </Typography>
-                </CardContent>
-              </Card>
+                          return (
+                            <TableCell key={index} align='center'>
+                              {hour}:{minute}
+                            </TableCell>
+                          );
+                        })}
+                      </TableRow>
+                    </TableHead>
+                    <TableBody sx={{ backgroundColor: '#0f051d' }}>
+                      <TableRow>
+                        {latestHistoricalData.map((data, index) => {
+                          if (index === 0) {
+                            return null;
+                          }
+
+                          const previousPrice = historicalData[index - 1][1];
+                          const currentPrice = data[1];
+                          const change = ((currentPrice - previousPrice) / previousPrice * 100).toFixed(2);
+
+                          return (
+                            <TableCell key={index} sx={{ color: change < 0 ? red[500] : green[400] }} align='center'>
+                              {change}%
+                            </TableCell>
+                          );
+                        })}
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Grid>
+              <Grid item>
+                <TableContainer component={Paper}>
+                  <Table>
+                    <TableHead sx={{ backgroundImage: 'linear-gradient(25deg, #2600fc, #ff00ea)' }}>
+                      <TableRow>
+                        <TableCell align='center'>
+                          Vol
+                        </TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody sx={{ backgroundColor: '#0f051d' }}>
+                      <TableRow>
+                        <TableCell align='center'>
+                          {currencySymbol}{formattedTradingVolume}
+                        </TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Grid>
+              <Grid item>
+                <Typography variant='h6'>
+                  Crypt-Coinverter
+                </Typography>
+                <Card>
+                  <CardContent>
+                    <TextField
+                      size="small"
+                      label={coin.name}
+                      id="outlined-start-adornment"
+                      type='number'
+                      value={currencyValue}
+                      onChange={handleCurrencyValueChange}
+                      sx={{ my: 1, width: '100%' }}
+                      InputProps={{
+                        startAdornment: <InputAdornment position="start">{coin.symbol.toUpperCase()}</InputAdornment>,
+                      }}
+                    />
+
+                    <TextField
+                      size="small"
+                      label={currency.toUpperCase()}
+                      id="outlined-start-adornment"
+                      value={formattedComputedPrice}
+                      sx={{ my: 1, width: '100%' }}
+                      InputProps={{
+                        startAdornment: <InputAdornment position="start">{currencySymbol}</InputAdornment>,
+                      }}
+                    />
+                  </CardContent>
+                </Card>
+              </Grid>
             </Grid>
           </Grid>
         </Grid>
