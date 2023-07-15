@@ -119,11 +119,11 @@ export default function CustomPaginationActionsTable() {
     }, [currency]);
 
     return (
-        <Box sx={{ p: 3 }}>
+        <Box sx={{p: 3}}>
             <Stack direction='column' spacing={2}>
                 <Box>
-                    <Typography sx={{ textAlign: 'center' }} variant='h4'>
-                        Market Update
+                    <Typography sx={{textAlign: 'center'}} variant='h4'>
+                        {isMobile ? 'Market Update' : 'Cryptocurrency Prices by Market Cap'}
                     </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
@@ -166,19 +166,7 @@ export default function CustomPaginationActionsTable() {
                                                         </Stack>
                                                     </Box>
                                                     <Box>
-                                                        {isMobile ? (
-                                                            coin.symbol.toUpperCase()
-                                                        ) : (
-                                                            <Stack direction="row" alignItems='center'>
-                                                                <Box>
-                                                                   {coin.name}
-                                                                    <Typography pl={2} variant='caption' color='text.secondary'>
-                                                                    {coin.symbol.toUpperCase()}
-                                                                    </Typography>
-                                                                </Box>
-                                                            </Stack>
-                                                        )
-                                                        }
+                                                        {isMobile ? coin.symbol.toUpperCase() : coin.name}
                                                     </Box>
                                                 </Stack>
                                             </TableCell>
@@ -186,13 +174,13 @@ export default function CustomPaginationActionsTable() {
                                                 {currencySymbol}{coin.current_price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                             </TableCell>
                                             <TableCell align="right">
-                                                <Box sx={{ color: coin.price_change_percentage_24h < 0 ? red[500] : green[400] }}>
+                                                <Box sx={{ color: coin.price_change_percentage_24h < 0 ? red[700] : green[500] }}>
                                                     {isMobile ? (
-                                                        <Fragment>
+                                                        <React.Fragment>
                                                             {coin.price_change_percentage_24h.toFixed(1)}%
-                                                        </Fragment>
+                                                        </React.Fragment>
                                                     ) : (
-                                                        <Fragment>
+                                                        <React.Fragment>
                                                             {coin.price_change_percentage_24h < 0 ? (
                                                                 <Stack direction="row" justifyContent='flex-end' alignItems='center' spacing={1}>
                                                                     <Box>
@@ -212,7 +200,7 @@ export default function CustomPaginationActionsTable() {
                                                                     </Box>
                                                                 </Stack>
                                                             )}
-                                                        </Fragment>
+                                                        </React.Fragment>
                                                     )}
                                                 </Box>
                                             </TableCell>
@@ -236,18 +224,18 @@ export default function CustomPaginationActionsTable() {
                             </TableBody>
                         </Table>
                     </TableContainer>
+                    <TablePagination
+                        sx={{ border: 'none', mt: 2 }}
+                        rowsPerPageOptions={[]}
+                        colSpan={5}
+                        count={coins.length}
+                        rowsPerPage={10}
+                        page={page}
+                        onPageChange={handleChangePage}
+                        ActionsComponent={TablePaginationActions}
+                    />
                 </Box>
             </Stack>
-            <TablePagination
-                sx={{ border: 'none', mt: 2, display: 'flex', justifyContent: {xs: 'center', md: 'flex-end' }}}
-                rowsPerPageOptions={[]}
-                colSpan={5}
-                count={coins.length}
-                rowsPerPage={10}
-                page={page}
-                onPageChange={handleChangePage}
-                ActionsComponent={TablePaginationActions}
-            />
         </Box>
     );
 }
