@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { SingleCoin, HistoricalChart } from '../config/Api';
-import { Box, Button, Card, CardContent, CardMedia, FormControl, FormHelperText, Grid, InputAdornment, OutlinedInput, Paper, Stack, TextField, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, CardMedia, FormControl, FormHelperText, Grid, InputAdornment, LinearProgress, OutlinedInput, Paper, Stack, TextField, Typography } from '@mui/material';
 import useStore from '../store';
 import { useMediaQuery } from '@mui/material';
 import Loading from '../components/Loading';
@@ -12,6 +12,8 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import ProgressBar from '../components/ProgressBar';
+import ImportExportIcon from '@mui/icons-material/ImportExport';
 
 const Coin = () => {
   const { id } = useParams();
@@ -20,6 +22,8 @@ const Coin = () => {
   const [historicalData, setHistoricalData] = useState([]);
   const { currency } = useStore((state) => state);
   const [coinValueBTC, setCoinValueBTC] = useState(null); // Added coinValueBTC state
+  const [currencyValue, setCurrencyValue] = useState('');
+  const [computedPrice, setComputedPrice] = useState(0);
 
   const currencySymbol = currency === 'eur' ? '€' : currency === 'jpy' ? '¥' : currency === 'php' ? '₱' : '$';
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down('md'));
@@ -66,20 +70,6 @@ const Coin = () => {
     fetchCoinValueBTC(); // Call fetchCoinValueBTC to fetch the value in BTC
   }, [id, currency]);
 
-  const parseHTML = (html) => {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, 'text/html');
-
-    // Apply custom styling to anchor tags
-    const links = doc.querySelectorAll('a');
-    links.forEach((link) => {
-      link.style.textDecoration = 'none';
-      link.style.color = '#ff00ea';
-    });
-
-    return doc.body.innerHTML;
-  };
-
   if (isLoading) {
     return <Loading height='80vh' />;
   }
@@ -110,10 +100,56 @@ const Coin = () => {
   const currentPrice = coin?.market_data?.current_price?.[currency] || 0;
   const coinChange = ((currentPrice - previousPrice) / previousPrice * 100).toFixed(2);
 
+  const handleCurrencyValueChange = (event) => {
+    const value = event.target.value;
+    setCurrencyValue(value);
+
+    // Calculate computed price
+    const computedPrice = value * currentPrice;
+    setComputedPrice(computedPrice);
+  };
+
+  const formattedComputedPrice = computedPrice.toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
+  const formatted24hLow = coin?.market_data?.low_24h?.[currency]?.toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }) || 'N/A';
+
+  const formatted24hHigh = coin?.market_data?.high_24h?.[currency]?.toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }) || 'N/A';
+
+  const calculateProgress = () => {
+    if (formatted24hLow === 'N/A' || formatted24hHigh === 'N/A') {
+      return 0;
+    }
+
+    const low = parseFloat(formatted24hLow.replace(/,/g, ''));
+    const high = parseFloat(formatted24hHigh.replace(/,/g, ''));
+    const currentValue = parseFloat(formattedPrice.replace(/,/g, ''));
+
+    if (currentValue >= high) {
+      return 100;
+    }
+
+    if (currentValue <= low) {
+      return 0;
+    }
+
+    return ((currentValue - low) / (high - low)) * 100;
+  };
+
+  const progress = calculateProgress();
+
   return (
     <Box sx={{ p: 3 }}>
       <Grid container direction='row' spacing={5}>
-        <Grid item container direction='row' xs={12} >
+        <Grid item container direction='row' xs={12} spacing={2}>
           <Grid item xs={12} md={8}>
             <Grid container direction='column' spacing={1}>
               <Grid item>
@@ -160,16 +196,33 @@ const Coin = () => {
                     </Typography>
                   </Grid>
                   <Grid item>
-                    <Typography variant='body2' sx={{ color: coinChange == 0 ? red[500] : green[400] }}>
-                      {coinChange}%
-                    </Typography>
+                    <ProgressBar percent={progress} />
                   </Grid>
                 </Grid>
               </Grid>
-              <Grid item sx={{mt: 1}}>
-                <Typography variant='h6'>
-                  Percentage Change in the Price
-                </Typography>
+              <Grid item>
+                <Grid container direction='row' alignItems='center' spacing={1}>
+                  <Grid item>
+                    <Grid container direction='row' alignItems='center'>
+                      <Grid item>
+                        <ImportExportIcon sx={{ fontSize: '1em' }} /> 
+                      </Grid>
+                      <Grid item>
+                        <Typography variant='body2'>
+                          {progress.toLocaleString(undefined, {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}%
+                        </Typography>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                  <Grid item>
+                    <ProgressBar percent={progress} width={isMobile ? 200 : 400} />
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid item sx={{ mt: 1 }}>
                 <TableContainer component={Paper}>
                   <Table>
                     <TableHead sx={{ backgroundImage: 'linear-gradient(25deg, #2600fc, #ff00ea)' }}>
@@ -207,39 +260,47 @@ const Coin = () => {
                   </Table>
                 </TableContainer>
               </Grid>
-              <Grid item>
-                <Card>
-                  <CardContent>
-                    <TextField
-                      label={`${coin.name} Value`}
-                      id="outlined-start-adornment"
-                      type='number'
-                      sx={{ m: 1, width: '25ch' }}
-                      InputProps={{
-                        startAdornment: <InputAdornment position="start">{coin.symbol.toUpperCase()}</InputAdornment>,
-                      }}
-                    />
-                    <TextField
-                      label={`${currency.toUpperCase()} Value`}
-                      id="outlined-start-adornment"
-                      type='number'
-                      sx={{ m: 1, width: '25ch' }}
-                      InputProps={{
-                        startAdornment: <InputAdornment position="start">{currency.toUpperCase()}</InputAdornment>,
-                      }}
-                    />
-                  </CardContent>
-                </Card>
-              </Grid>
             </Grid>
           </Grid>
           <Grid item xs={12} md={4}>
-            asda
+            <Grid item>
+              <Typography variant='h6'>
+                Crypt-Coinverter
+              </Typography>
+              <Card>
+                <CardContent>
+                  <TextField
+                    label={coin.name}
+                    id="outlined-start-adornment"
+                    type='number'
+                    value={currencyValue}
+                    onChange={handleCurrencyValueChange}
+                    sx={{ my: 1, width: '100%' }}
+                    InputProps={{
+                      startAdornment: <InputAdornment position="start">{coin.symbol.toUpperCase()}</InputAdornment>,
+                    }}
+                  />
+
+                  <TextField
+                    label={currency.toUpperCase()}
+                    id="outlined-start-adornment"
+                    value={formattedComputedPrice}
+                    sx={{ my: 1, width: '100%' }}
+                    InputProps={{
+                      startAdornment: <InputAdornment position="start">{currencySymbol}</InputAdornment>,
+                    }}
+                  />
+                  <Typography sx={{ mt: 1 }} variant='caption'>
+                    1 {coin.symbol.toUpperCase()} = {currencySymbol}{formattedPrice}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
           </Grid>
         </Grid>
         <Grid item xs={12}>
           <Button variant='contained' to={`/market`} component={Link} sx={{ backgroundImage: 'linear-gradient(25deg, #2600fc, #ff00ea)', textTransform: 'none' }}>
-            Button
+            Back
           </Button>
         </Grid>
       </Grid>
@@ -248,30 +309,3 @@ const Coin = () => {
 };
 
 export default Coin;
-
-
-
-            // <Typography variant='body2'>
-            //   Market Cap: {currencySymbol}{formattedMarketCap}
-            // </Typography>
-            // <Typography variant='body2'>
-            //   Fully Diluted Valuation: {currencySymbol}{formattedFullyDilutedValuation}
-            // </Typography>
-            // <Typography variant='body2'>
-            //   24hr trading volume: {currencySymbol}{formattedTradingVolume}
-            // </Typography>
-            // <Typography variant='body2'>
-            //   Circulating Supply: {formattedCirculatingSupply}
-            // </Typography>
-            // <Typography variant='body2'>
-            //   Total Supply: {formattedTotalSupply}
-            // </Typography>
-            // <Typography variant='body2'>
-            //   Max Supply: {formattedMaxSupply}
-            // </Typography>
-            // <Typography
-            //   variant='body2'
-            //   dangerouslySetInnerHTML={{
-            //     __html: `${parseHTML(coin.description.en).split('.')[0]}.`,
-            //   }}
-            // />
