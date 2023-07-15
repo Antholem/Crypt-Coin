@@ -83,16 +83,25 @@ const Coin = () => {
     maximumFractionDigits: 2,
   }) || 'N/A';
 
+  const formatNumberWithSuffix = (number) => {
+  if (number >= 1000000) {
+    return (number / 1000000000).toLocaleString(undefined, { minimumFractionDigits: isMobile ? 1 : 2, maximumFractionDigits: isMobile ? 1 : 2 }) + 'M';
+  } else if (number >= 1000000) {
+    return (number / 1000).toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + 'K';
+  }
+  return number.toLocaleString();
+};
+
   const formattedChange24h = coin?.market_data?.price_change_percentage_24h || 'N/A';
   const formattedChange7d = coin?.market_data?.price_change_percentage_7d || 'N/A';
   const formattedChange30d = coin?.market_data?.price_change_percentage_30d || 'N/A';
   const formattedChange1y = coin?.market_data?.price_change_percentage_1y || 'N/A';
 
   const formattedMarketCap = coin?.market_data?.market_cap?.[currency]?.toLocaleString() || 'N/A';
-  const formattedFullyDilutedValuation = coin?.market_data?.fully_diluted_valuation?.[currency]?.toLocaleString() || 'N/A';
-  const formattedTradingVolume = coin?.market_data?.total_volume?.[currency]?.toLocaleString() || 'N/A';
-  const formattedCirculatingSupply = coin?.market_data?.circulating_supply?.toLocaleString() || 'N/A';
-  const formattedTotalSupply = coin?.market_data?.total_supply?.toLocaleString() || 'N/A';
+  const formattedFullyDilutedValuation = coin?.market_data?.fully_diluted_valuation?.[currency] || 'N/A';
+  const formattedTradingVolume = coin?.market_data?.total_volume?.[currency] || 'N/A';
+  const formattedCirculatingSupply = coin?.market_data?.circulating_supply || 'N/A';
+  const formattedTotalSupply = coin?.market_data?.total_supply || 'N/A';
   const formattedMaxSupply = coin?.market_data?.max_supply?.toLocaleString() || 'N/A';
 
   // Calculate the coin's change in value
@@ -308,9 +317,9 @@ const Coin = () => {
                         <Typography variant='body2'>
                           {coin.name} ({coin.symbol.toUpperCase()}) is currently ranked #{coin.market_cap_rank} among cryptocurrencies, with a price of {currencySymbol}{formattedPrice}.
                           It has a BTC value of {coinValueBTC} and has experienced a {coinChange}% change in the past 24 hours.
-                          The cryptocurrency's Market Cap is {currencySymbol}{formattedMarketCap}, and its Fully Diluted Valuation is {currencySymbol}{formattedFullyDilutedValuation}.
-                          With a trading volume of {currencySymbol}{formattedTradingVolume} in the last 24 hours,{' '}
-                          {coin.name} has a circulating supply of {formattedCirculatingSupply}, a total supply of {formattedTotalSupply}, and a maximum supply of {formattedMaxSupply}.
+                          The cryptocurrency's Market Cap is {currencySymbol}{formattedMarketCap}, and its Fully Diluted Valuation is {currencySymbol}{formattedFullyDilutedValuation?.toLocaleString()}.
+                          With a trading volume of {currencySymbol}{formattedTradingVolume?.toLocaleString()} in the last 24 hours,{' '}
+                          {coin.name} has a circulating supply of {formattedCirculatingSupply?.toLocaleString()}, a total supply of {formattedTotalSupply.toLocaleString()}, and a maximum supply of {formattedMaxSupply}.
                         </Typography>
                     </>
                   )
@@ -371,12 +380,30 @@ const Coin = () => {
                         <TableCell align='center'>
                           Vol
                         </TableCell>
+                        <TableCell align='center'>
+                          FDV
+                        </TableCell>
+                        <TableCell align='center'>
+                          CS
+                        </TableCell>
+                        <TableCell align='center'>
+                          Total
+                        </TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody sx={{ backgroundColor: '#0f051d' }}>
                       <TableRow>
                         <TableCell align='center'>
-                          {currencySymbol}{formattedTradingVolume}
+                          {currencySymbol}{formatNumberWithSuffix(formattedTradingVolume)}
+                        </TableCell>
+                        <TableCell align='center'>
+                          {currencySymbol}{formatNumberWithSuffix(formattedFullyDilutedValuation)}
+                        </TableCell>
+                        <TableCell align='center'>
+                          {formatNumberWithSuffix(formattedCirculatingSupply)}
+                        </TableCell>
+                        <TableCell align='center'>
+                          {formatNumberWithSuffix(formattedTotalSupply)}
                         </TableCell>
                       </TableRow>
                     </TableBody>
