@@ -93,11 +93,12 @@ function NavBar(props) {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <CardMedia component='img' image={Logo} sx={{ width: 20, height: 20, mr: 1 }} />
+                    <CardMedia component={Link} to={'/'} image={Logo} sx={{ cursor: 'pointer', width: 20, height: 20, mr: 1 }} />
                     <Typography
+                        component={Link} to={'/'}
+                        image={Logo}
                         variant="h6"
-                        component="div"
-                        sx={{ flexGrow: 1 }}
+                        sx={{ cursor: 'pointer', flexGrow: 1, textDecoration: 'none', color: grey[50] }}
                     >
 
                         Crypt-Coin
