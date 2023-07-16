@@ -84,13 +84,17 @@ const Coin = () => {
   }) || 'N/A';
 
   const formatNumberWithSuffix = (number) => {
-  if (number >= 1000000) {
-    return (number / 1000000000).toLocaleString(undefined, { minimumFractionDigits: isMobile ? 1 : 2, maximumFractionDigits: isMobile ? 1 : 2 }) + 'M';
-  } else if (number >= 1000000) {
-    return (number / 1000).toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + 'K';
-  }
-  return number.toLocaleString();
-};
+    if (number >= 1000000000000) {
+      return (number / 1000000000000).toLocaleString(undefined, { minimumFractionDigits: isMobile ? 1 : 2, maximumFractionDigits: isMobile ? 1 : 2 }) + 'T';
+    } else if (number >= 1000000000) {
+      return (number / 1000000000).toLocaleString(undefined, { minimumFractionDigits: isMobile ? 1 : 2, maximumFractionDigits: isMobile ? 1 : 2 }) + 'B';
+    } else if (number >= 1000000) {
+      return (number / 1000000).toLocaleString(undefined, { minimumFractionDigits: isMobile ? 1 : 2, maximumFractionDigits: isMobile ? 1 : 2 }) + 'M';
+    } else if (number >= 100) {
+      return (number / 1000).toLocaleString(undefined, { minimumFractionDigits: isMobile ? 1 : 2, maximumFractionDigits: isMobile ? 1 : 2 }) + 'K';
+    }
+    return number.toLocaleString();
+  };
 
   const formattedChange24h = coin?.market_data?.price_change_percentage_24h || 'N/A';
   const formattedChange7d = coin?.market_data?.price_change_percentage_7d || 'N/A';
