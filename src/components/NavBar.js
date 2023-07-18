@@ -1,30 +1,20 @@
-import * as React from 'react';
-import PropTypes from 'prop-types';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import CssBaseline from '@mui/material/CssBaseline';
-import Divider from '@mui/material/Divider';
-import Drawer from '@mui/material/Drawer';
-import IconButton from '@mui/material/IconButton';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemText from '@mui/material/ListItemText';
-import MenuIcon from '@mui/icons-material/Menu';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Logo from '../logo.png'
-import { Link, useLocation } from 'react-router-dom';
-import { MenuItem, Select, CardMedia } from '@mui/material';
+import React from 'react';
+import Logo from '../logo.png';
 import useStore from '../store';
+import { Link, useLocation } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { AppBar, Box, CssBaseline, Divider, Drawer, IconButton, List, ListItem, ListItemButton, ListItemText, Toolbar, Typography, MenuItem, Select, CardMedia } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
 import { grey } from '@mui/material/colors';
 
 const drawerWidth = '100%';
 
 function NavBar(props) {
+    const location = useLocation();
+    const path = location.pathname;
+    const { window } = props;
     const currency = useStore((state) => state.currency);
     const setCurrency = useStore((state) => state.setCurrency);
-    const { window } = props;
     const [mobileOpen, setMobileOpen] = React.useState(false);
 
     const handleDrawerToggle = () => {
@@ -34,7 +24,7 @@ function NavBar(props) {
     const navItems = [
         { page: 'Home', path: '/' },
         { page: 'About', path: '/about' },
-        { page: 'Market', path: '/market' }
+        { page: 'Market', path: '/market' },
     ];
 
     const currencies = [
@@ -44,19 +34,47 @@ function NavBar(props) {
         { name: 'PHP', value: 'php' },
     ];
 
-    const location = useLocation(); // useLocation for routing
-
-    const path = location.pathname;
-
     const handleChangeCurrency = (e) => {
         const selectedCurrency = e.target.value;
         setCurrency(selectedCurrency);
         localStorage.setItem('currency', selectedCurrency);
     };
 
+    const style = {
+        logoContainer: {
+            cursor: 'pointer',
+            width: 20,
+            height: 20,
+            mr: 1,
+        },
+        title: {
+            cursor: 'pointer',
+            flexGrow: 1,
+            textDecoration: 'none',
+            color: grey[50],
+        },
+        navLink: {
+            cursor: 'pointer',
+            textDecoration: 'none',
+            mx: 2,
+            transition: '0.5s',
+        },
+        select: {
+            width: 100,
+            height: 40,
+            marginLeft: 15,
+        },
+        drawer: {
+            textAlign: 'center',
+        },
+        drawerItem: {
+            textAlign: 'center',
+        },
+    };
+
     const drawer = (
-        <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
-            <Typography variant="h6" sx={{ my: 2 }}>
+        <Box onClick={handleDrawerToggle} sx={style.drawer}>
+            <Typography variant='h6' sx={{ my: 2 }}>
                 Crypt-Coin
             </Typography>
             <Divider />
@@ -64,7 +82,7 @@ function NavBar(props) {
                 {navItems.map((item) => (
                     <ListItem key={item.page} disablePadding>
                         <ListItemButton
-                            sx={{ textAlign: 'center' }}
+                            sx={style.drawerItem}
                             component={Link}
                             to={item.path}
                             selected={item.path === path}
@@ -77,51 +95,51 @@ function NavBar(props) {
         </Box>
     );
 
-    const container = window !== undefined ? () => window().document.body : undefined;
+    const container =
+        window !== undefined ? () => window().document.body : undefined;
 
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
-            <AppBar component="nav" color='inherit'>
+            <AppBar component='nav' color='inherit'>
                 <Toolbar>
                     <IconButton
-                        color="inherit"
-                        aria-label="open drawer"
-                        edge="start"
+                        color='inherit'
+                        aria-label='open drawer'
+                        edge='start'
                         onClick={handleDrawerToggle}
                         sx={{ mr: 2, display: { sm: 'none' } }}
                     >
                         <MenuIcon />
                     </IconButton>
-                    <CardMedia component={Link} to={'/'} image={Logo} sx={{ cursor: 'pointer', width: 20, height: 20, mr: 1 }} />
-                    <Typography
-                        component={Link} to={'/'}
+                    <CardMedia
+                        component={Link}
+                        to={'/'}
                         image={Logo}
-                        variant="h6"
-                        sx={{ cursor: 'pointer', flexGrow: 1, textDecoration: 'none', color: grey[50] }}
+                        sx={style.logoContainer}
+                    />
+                    <Typography
+                        component={Link}
+                        to={'/'}
+                        variant='h6'
+                        sx={style.title}
                     >
-
                         Crypt-Coin
                     </Typography>
                     <Box sx={{ display: { xs: 'none', sm: 'block' }, flexGrow: 1 }}>
                         {navItems.map((item) => (
                             <Typography
                                 sx={{
-                                    cursor: 'pointer',
-                                    textDecoration: 'none',
-                                    mx: 2,
-                                    transition: '0.5s',
-                                    color:
+                                    ...style.navLink, color:
                                         item.path === path ||
                                             (item.path === '/market' && path === '/market/') ||
                                             (item.path === '/market' && path.startsWith('/market/'))
-                                            ? '#ff00ea' // Highlight specific links based on path value
+                                            ? '#ff00ea'
                                             : grey[50],
                                     '&:hover': {
                                         color: '#ff00ea',
-                                    },
-                                }}
-                                variant="body1"
+                                    }}}
+                                variant='body1'
                                 key={item.page}
                                 component={Link}
                                 to={item.path}
@@ -130,38 +148,37 @@ function NavBar(props) {
                                 {item.page}
                             </Typography>
                         ))}
-
                     </Box>
                     <Select
-                        variant="outlined"
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        label="Currency"
+                        variant='outlined'
+                        labelId='demo-simple-select-label'
+                        id='demo-simple-select'
+                        label='Currency'
                         onChange={handleChangeCurrency}
                         value={currency}
-                        style={{ width: 100, height: 40, marginLeft: 15 }}
+                        style={style.select}
                     >
                         {currencies.map((currency) => (
-                            <MenuItem value={currency.value}>
+                            <MenuItem value={currency.value} key={currency.name}>
                                 {currency.name}
                             </MenuItem>
                         ))}
                     </Select>
                 </Toolbar>
             </AppBar>
-            <Box component="nav">
+            <Box component='nav'>
                 <Drawer
                     anchor={'top'}
                     container={container}
-                    variant="temporary"
+                    variant='temporary'
                     open={mobileOpen}
                     onClose={handleDrawerToggle}
                     ModalProps={{
-                        keepMounted: true, // Better open performance on mobile.
+                        keepMounted: true,
                     }}
                     sx={{
                         display: { xs: 'block', sm: 'none' },
-                        '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, },
+                        '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
                     }}
                 >
                     {drawer}
@@ -172,12 +189,6 @@ function NavBar(props) {
     );
 }
 
-NavBar.propTypes = {
-    /**
-     * Injected by the documentation to work in an iframe.
-     * You won't need it on your project.
-     */
-    window: PropTypes.func,
-};
+NavBar.propTypes = { window: PropTypes.func };
 
 export default NavBar;

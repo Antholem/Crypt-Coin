@@ -1,27 +1,17 @@
 import React, { Fragment, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import Loading from '../components/Loading';
 import PropTypes from 'prop-types';
+import useStore from '../store';
 import { useTheme } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TablePagination from '@mui/material/TablePagination';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import IconButton from '@mui/material/IconButton';
+import { Box, useMediaQuery, Table, TableBody, TableCell, TableContainer, TablePagination, TableRow, Paper, IconButton, CardMedia, Grid, Stack, TableHead, Typography } from '@mui/material/';
+import { green, red } from '@mui/material/colors';
 import FirstPageIcon from '@mui/icons-material/FirstPage';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
-import { CardMedia, Grid, Stack, TableHead, Typography } from '@mui/material';
-import Loading from '../components/Loading';
 import MovingIcon from '@mui/icons-material/Moving';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
-import { green, red } from '@mui/material/colors';
-import useStore from '../store';
-import { Link } from 'react-router-dom';
-import { useMediaQuery } from '@mui/material';
 
 const columns = [
     { id: 'rank', label: '#', minWidth: 0 },
@@ -51,26 +41,24 @@ function TablePaginationActions(props) {
         onPageChange(event, Math.max(0, Math.ceil(count / 10) - 1));
     };
 
+    const style = {
+        paginationActions: {
+            flexShrink: 0, ml: 2.5
+        }
+    };
+
     return (
-        <Box sx={{ flexShrink: 0, ml: 2.5 }}>
-            <IconButton onClick={handleFirstPageButtonClick} disabled={page === 0} aria-label="first page">
+        <Box sx={style.paginationActions}>
+            <IconButton onClick={handleFirstPageButtonClick} disabled={page === 0} aria-label='first page'>
                 {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
             </IconButton>
-            <IconButton onClick={handleBackButtonClick} disabled={page === 0} aria-label="previous page">
+            <IconButton onClick={handleBackButtonClick} disabled={page === 0} aria-label='previous page'>
                 {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
             </IconButton>
-            <IconButton
-                onClick={handleNextButtonClick}
-                disabled={page >= Math.ceil(count / 10) - 1}
-                aria-label="next page"
-            >
+            <IconButton onClick={handleNextButtonClick} disabled={page >= Math.ceil(count / 10) - 1} aria-label='next page'>
                 {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
             </IconButton>
-            <IconButton
-                onClick={handleLastPageButtonClick}
-                disabled={page >= Math.ceil(count / 10) - 1}
-                aria-label="last page"
-            >
+            <IconButton onClick={handleLastPageButtonClick} disabled={page >= Math.ceil(count / 10) - 1} aria-label='last page'>
                 {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
             </IconButton>
         </Box>
@@ -118,67 +106,111 @@ export default function CustomPaginationActionsTable() {
         fetchCoins();
     }, [currency]);
 
+    const style = {
+        marketContainer: {
+            p: 3
+        },
+        textCenter: {
+            textAlign: 'center'
+        },
+        gradientText: {
+            textAlign: 'center', fontWeight: 'bold', 
+            background: '-webkit-linear-gradient(25deg, #2600fc, #ff00ea)', 
+            '-webkit-background-clip': 
+            'text', '-webkit-text-fill-color': 
+            'transparent'
+        },
+        tableContainer: {
+            display: 'flex', 
+            flexDirection: 'column', 
+            alignItems: 'flex-end'
+        },
+        tableMinWidth: {
+            minWidth: 500 
+        },
+        tableHeader: {
+            backgroundImage: 'linear-gradient(25deg, #2600fc, #ff00ea)'
+        },
+        tableBody: {
+            backgroundColor: '#0f051d'
+        },
+        tableRow: {
+            cursor: 'pointer',
+            textDecoration: 'none',
+            '&:hover': {
+                backgroundColor: '#200840',
+                transition: '0.5s',
+            },
+        },
+        coinImage: {
+            width: '24px',
+            height: '24px',
+            marginRight: { xs: 0, md: 1 }
+        },
+        tableChangeIcon: {
+            fontSize: '1em'
+        },
+        tablePagination: {
+            border: 'none',
+            mt: 2, 
+            display: 'flex',
+            justifyContent: { xs: 'center', md: 'flex-end' }
+        }
+    };
+
     return (
-        <Box sx={{ p: 3 }}>
+        <Box sx={style.marketContainer}>
             <Stack direction='column' spacing={2}>
                 <Box>
                     <Grid item container direction='row' justifyContent='center' alignItems='flex-end' spacing={1}>
                         <Grid>
-                            <Typography sx={{ textAlign: 'center' }} variant='h4'>
+                            <Typography sx={style.textCenter} variant='h4'>
                                 Market
                             </Typography>
                         </Grid>
                         <Grid item>
-                            <Typography sx={{ textAlign: 'center', fontWeight: 'bold', background: '-webkit-linear-gradient(25deg, #2600fc, #ff00ea)', '-webkit-background-clip': 'text', '-webkit-text-fill-color': 'transparent' }} variant='h4'>
+                            <Typography sx={[style.textCenter, style.gradientText]} variant='h4'>
                                 Update
                             </Typography>
                         </Grid>
                     </Grid>
                 </Box>
-                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                <Box sx={style.tableContainer}>
                     <TableContainer component={Paper}>
-                        <Table sx={{ minWidth: 500 }} aria-label="custom pagination table">
-                            <TableHead sx={{ backgroundImage: 'linear-gradient(25deg, #2600fc, #ff00ea)' }}>
+                        <Table sx={style.tableMinWidth} aria-label='custom pagination table'>
+                            <TableHead sx={style.tableHeader}>
                                 <TableRow>
                                     {columns.map((column) => (
-                                        <TableCell
-                                            key={column.id}
-                                            align={isMobile ? 'center' : column.align}
-                                            style={{ minWidth: column.minWidth }}
-                                        >
-                                            {column.id === 'change' && isMobile
-                                                ? '24h'
-                                                : column.id === 'marketcap' && isMobile
-                                                    ? 'Mkt Cap'
-                                                    : column.label}
+                                        <TableCell key={column.id} align={isMobile ? 'center' : column.align} style={{ minWidth: column.minWidth }}>
+                                            {column.id === 'change' && isMobile ? '24h' : column.id === 'marketcap' && isMobile ? 'Mkt Cap' : column.label}
                                         </TableCell>
                                     ))}
                                 </TableRow>
                             </TableHead>
-                            <TableBody sx={{ backgroundColor: '#0f051d' }}>
+                            <TableBody sx={style.tableBody}>
                                 {!isLoading &&
                                     coins.slice(page * 10, page * 10 + 10).map((coin) => (
                                         <TableRow
                                             key={coin.id}
                                             component={Link}
                                             to={`/market/${coin.id}`}
-                                            sx={{ cursor: 'pointer', textDecoration: 'none', '&:hover': { backgroundColor: '#200840', transition: '0.5s', } }}
+                                            sx={style.tableRow}
                                         >
-                                            <TableCell component="th" scope="row">
+                                            <TableCell component='th' scope='row'>
                                                 {coin.rank}
                                             </TableCell>
                                             <TableCell>
-                                                <Stack direction="row" spacing={1} alignItems="center">
+                                                <Stack direction='row' spacing={1} alignItems='center'>
                                                     <Box>
                                                         <Stack>
-                                                            <CardMedia component='img' image={coin.image} sx={{ width: '24px', height: '24px', marginRight: { xs: 0, md: 1 } }} />
+                                                            <CardMedia sx={style.coinImage} component='img' image={coin.image} />
                                                         </Stack>
                                                     </Box>
                                                     <Box>
                                                         {isMobile ? (
                                                             coin.symbol.toUpperCase()
                                                         ) : (
-                                                            <Stack direction="row" alignItems='center'>
+                                                            <Stack direction='row' alignItems='center'>
                                                                 <Box>
                                                                     {coin.name}
                                                                     <Typography pl={2} variant='caption' color='text.secondary'>
@@ -186,15 +218,14 @@ export default function CustomPaginationActionsTable() {
                                                                     </Typography>
                                                                 </Box>
                                                             </Stack>
-                                                        )
-                                                        }
+                                                        )}
                                                     </Box>
                                                 </Stack>
                                             </TableCell>
-                                            <TableCell align="right">
+                                            <TableCell align='right'>
                                                 {currencySymbol}{coin.current_price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                             </TableCell>
-                                            <TableCell align="right">
+                                            <TableCell align='right'>
                                                 <Box sx={{ color: coin.price_change_percentage_24h < 0 ? red[500] : green[400] }}>
                                                     {isMobile ? (
                                                         <Fragment>
@@ -203,21 +234,21 @@ export default function CustomPaginationActionsTable() {
                                                     ) : (
                                                         <Fragment>
                                                             {coin.price_change_percentage_24h < 0 ? (
-                                                                <Stack direction="row" justifyContent='flex-end' alignItems='center' spacing={1}>
+                                                                <Stack direction='row' justifyContent='flex-end' alignItems='center' spacing={1}>
                                                                     <Box>
                                                                         {coin.price_change_percentage_24h}%
                                                                     </Box>
                                                                     <Box>
-                                                                        <TrendingDownIcon sx={{ fontSize: '1em' }} />
+                                                                        <TrendingDownIcon sx={style.tableChangeIcon} />
                                                                     </Box>
                                                                 </Stack>
                                                             ) : (
-                                                                <Stack direction="row" justifyContent='flex-end' alignItems='center' spacing={1}>
+                                                                <Stack direction='row' justifyContent='flex-end' alignItems='center' spacing={1}>
                                                                     <Box>
                                                                         {coin.price_change_percentage_24h}%
                                                                     </Box>
                                                                     <Box>
-                                                                        <MovingIcon sx={{ fontSize: '1em' }} />
+                                                                        <MovingIcon sx={style.tableChangeIcon} />
                                                                     </Box>
                                                                 </Stack>
                                                             )}
@@ -225,14 +256,14 @@ export default function CustomPaginationActionsTable() {
                                                     )}
                                                 </Box>
                                             </TableCell>
-                                            <TableCell align="right">
+                                            <TableCell align='right'>
                                                 {currencySymbol}{coin.market_cap.toLocaleString()}
                                             </TableCell>
                                         </TableRow>
                                     ))}
                                 {isLoading && (
                                     <TableRow>
-                                        <TableCell colSpan={5} align="center">
+                                        <TableCell colSpan={5} align='center'>
                                             <Loading />
                                         </TableCell>
                                     </TableRow>
@@ -248,7 +279,7 @@ export default function CustomPaginationActionsTable() {
                 </Box>
             </Stack>
             <TablePagination
-                sx={{ border: 'none', mt: 2, display: 'flex', justifyContent: { xs: 'center', md: 'flex-end' } }}
+                sx={style.tablePagination}
                 rowsPerPageOptions={[]}
                 colSpan={5}
                 count={coins.length}
