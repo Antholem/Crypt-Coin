@@ -14,7 +14,7 @@ import FirstPageIcon from '@mui/icons-material/FirstPage';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
-import { CardMedia, Stack, TableHead, Typography } from '@mui/material';
+import { CardMedia, Grid, Stack, TableHead, Typography } from '@mui/material';
 import Loading from '../components/Loading';
 import MovingIcon from '@mui/icons-material/Moving';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
@@ -122,9 +122,18 @@ export default function CustomPaginationActionsTable() {
         <Box sx={{ p: 3 }}>
             <Stack direction='column' spacing={2}>
                 <Box>
-                    <Typography sx={{ textAlign: 'center' }} variant='h4'>
-                        Market Update
-                    </Typography>
+                    <Grid item container direction='row' justifyContent='center' alignItems='flex-end' spacing={1}>
+                        <Grid>
+                            <Typography sx={{ textAlign: 'center' }} variant='h4'>
+                                Market
+                            </Typography>
+                        </Grid>
+                        <Grid item>
+                            <Typography sx={{ textAlign: 'center', fontWeight: 'bold', background: '-webkit-linear-gradient(25deg, #2600fc, #ff00ea)', '-webkit-background-clip': 'text', '-webkit-text-fill-color': 'transparent' }} variant='h4'>
+                                Update
+                            </Typography>
+                        </Grid>
+                    </Grid>
                 </Box>
                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
                     <TableContainer component={Paper}>

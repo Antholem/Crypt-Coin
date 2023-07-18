@@ -95,7 +95,7 @@ const Home = () => {
       </Grid>
       <Grid item>
         <Button variant='contained' to={`/market`} component={Link} sx={{ backgroundImage: 'linear-gradient(25deg, #2600fc, #ff00ea)', textTransform: 'none' }}>
-          See Prices
+          Explore Market
         </Button>
       </Grid>
     </Grid>
